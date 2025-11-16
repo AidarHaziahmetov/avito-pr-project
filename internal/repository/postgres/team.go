@@ -4,10 +4,11 @@ import (
 	"context"
 	"errors"
 
-	"github.com/aidar/avito-pr-project/internal/domain"
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgconn"
 	"github.com/jackc/pgx/v5/pgxpool"
+
+	"github.com/aidar/avito-pr-project/internal/domain"
 )
 
 // TeamRepository реализует repository.TeamRepository для PostgreSQL

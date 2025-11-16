@@ -100,6 +100,7 @@ fmt: ## Форматировать код
 	@echo "Форматирование кода..."
 	go fmt ./...
 	gofmt -s -w .
+	goimports -w -local github.com/aidar/avito-pr-project .
 
 tidy: ## Упорядочить go-модули
 	@echo "Упорядочивание модулей..."
@@ -113,6 +114,7 @@ install-tools: ## Установить инструменты разработк
 	@echo "Установка инструментов..."
 	go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest
 	go install github.com/golang-migrate/migrate/v4/cmd/migrate@latest
+	go install golang.org/x/tools/cmd/goimports@latest
 
 # Рабочий процесс разработки
 dev: docker-up ## Запустить окружение для разработки
