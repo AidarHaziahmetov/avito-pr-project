@@ -1,0 +1,156 @@
+run:
+  timeout: 5m
+  tests: true
+  modules-download-mode: readonly
+
+linters:
+  enable:
+    - errcheck      # Проверка обработки ошибок
+    - gosimple      # Упрощение кода
+    - govet         # Vet проверяет код на проблемы
+    - ineffassign   # Неэффективные присваивания
+    - staticcheck   # Статический анализ
+    - unused        # Неиспользуемые константы, переменные, функции
+    - typecheck     # Проверка типов
+    - gofmt         # Форматирование кода
+    - goimports     # Проверка импортов
+    - misspell      # Орфографические ошибки
+    - revive        # Замена golint
+    - gosec         # Проверка безопасности
+    - bodyclose     # Проверка закрытия HTTP body
+    - noctx         # Проверка передачи context
+    - sqlclosecheck # Проверка закрытия SQL запросов
+    - rowserrcheck  # Проверка ошибок SQL rows
+    - copyloopvar   # Проверка ссылок в циклах (замена exportloopref)
+    - goconst       # Повторяющиеся строки -> константы
+    - gocritic      # Мета-линтер с множеством проверок
+    - dupl          # Дубликаты кода
+    - whitespace    # Лишние пробелы
+
+linters-settings:
+  errcheck:
+    check-type-assertions: true
+    check-blank: true
+
+  govet:
+    enable:
+      - shadow
+      - fieldalignment
+
+  goimports:
+    local-prefixes: github.com/aidar/avito-pr-project
+
+  revive:
+    rules:
+      - name: exported
+        disabled: false
+      - name: var-naming
+        disabled: false
+      - name: package-comments
+        disabled: true
+      - name: indent-error-flow
+        disabled: false
+      - name: error-strings
+        disabled: false
+      - name: error-naming
+        disabled: false
+
+  gosec:
+    excludes:
+      - G204 # Subprocess launched with variable
+      - G304 # File path provided as taint input
+
+  goconst:
+    min-len: 3
+    min-occurrences: 3
+
+  dupl:
+    threshold: 100
+
+  gocritic:
+    enabled-tags:
+      - diagnostic
+      - style
+      - performance
+      - experimental
+      - opinionated
+
+issues:
+  exclude-use-default: false
+  max-issues-per-linter: 0
+  max-same-issues: 0
+  uniq-by-line: true
+  exclude-dirs:
+    - bin
+    - vendor
+  
+  exclude-rules:
+    # Исключаем некоторые линтеры для тестовых файлов
+    - path: _test\.go
+      linters:
+        - dupl
+        - gosec
+        - goconst
+        - errcheck
+        - noctx
+        - govet
+    
+    # Исключаем линтеры для тестовых helper'ов
+    - path: tests/
+      linters:
+        - errcheck
+        - noctx
+        - govet
+        - gosec
+    
+    # Исключаем известные false positives
+    - text: "weak cryptographic primitive"
+      linters:
+        - gosec
+    
+    # Разрешаем слабый random для выбора ревьюверов (не критично для безопасности)
+    - text: "G404.*weak random"
+      linters:
+        - gosec
+    
+    # Разрешаем blank импорты для embed
+    - source: "_ \"embed\""
+      linters:
+        - revive
+    
+    # Игнорируем fieldalignment для config структур (читаемость важнее)
+    - path: internal/config/
+      text: "fieldalignment"
+      linters:
+        - govet
+    
+    # Разрешаем похожие паттерны в handlers (стандартный код)
+    - path: internal/handler/
+      text: "lines are duplicate"
+      linters:
+        - dupl
+    
+    # Игнорируем hugeParam для методов config (читаемость)
+    - path: internal/config/
+      text: "hugeParam"
+      linters:
+        - gocritic
+    
+    # Игнорируем fieldalignment для domain структур (читаемость важнее)
+    - path: internal/domain/
+      text: "fieldalignment"
+      linters:
+        - govet
+    
+    # Разрешаем игнорировать ошибки в defer rollback (стандартный паттерн)
+    - text: "Error return value of.*Rollback.*is not checked"
+      linters:
+        - errcheck
+
+output:
+  formats:
+    - format: colored-line-number
+  print-issued-lines: true
+  print-linter-name: true
+  sort-results: true
+
