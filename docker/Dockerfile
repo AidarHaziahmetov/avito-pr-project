@@ -6,11 +6,6 @@ WORKDIR /app
 # Устанавливаем git для загрузки зависимостей
 RUN apk add --no-cache git
 
-# Настраиваем Go proxy с fallback на прямое скачивание(у меня не работало с запущенным vpn)
-ENV GOPROXY=https://proxy.golang.org,https://goproxy.io,direct
-ENV GOSUMDB=sum.golang.org
-ENV GOPRIVATE=""
-
 # Копируем файлы зависимостей и загружаем их (кэшируется Docker)
 COPY go.mod go.sum ./
 RUN go mod download
