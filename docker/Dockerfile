@@ -11,7 +11,7 @@ RUN go mod download
 COPY . .
 
 # Собираем приложение (статическая сборка без CGO для Alpine)
-RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o /app/api ./cmd/api/main.go
+RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o api ./cmd/api/main.go
 
 # Стадия runtime - минимальный образ для запуска
 FROM alpine:3.19
