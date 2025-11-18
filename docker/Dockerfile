@@ -3,9 +3,6 @@ FROM golang:1.25-alpine AS builder
 
 WORKDIR /app
 
-# Устанавливаем git для загрузки зависимостей
-RUN apk add --no-cache git
-
 # Копируем файлы зависимостей и загружаем их (кэшируется Docker)
 COPY go.mod go.sum ./
 RUN go mod download
@@ -19,8 +16,6 @@ RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o /app/api ./cmd/api/main.go
 # Стадия runtime - минимальный образ для запуска
 FROM alpine:latest
 
-# Устанавливаем CA сертификаты и временные зоны
-RUN apk --no-cache add ca-certificates tzdata
 
 WORKDIR /root/
 
