@@ -14,13 +14,13 @@ COPY . .
 RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o /app/api ./cmd/api/main.go
 
 # Стадия runtime - минимальный образ для запуска
-FROM alpine:latest
+FROM alpine:3.19
 
 
 WORKDIR /root/
 
 # Копируем только скомпилированный бинарник из стадии builder
-COPY --from=builder /app/api .
+COPY --from=builder /app/api ./api
 
 # Открываем порт 8080 для HTTP сервера
 EXPOSE 8080
